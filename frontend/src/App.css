@@ -52,7 +52,7 @@
     display: flex;
     flex-direction: column;
     background-color: #d6b751;
-    width: 100%;
+    flex-grow: 1;
 
 }
 .sentiment-analysis div{
@@ -62,5 +62,6 @@
     width: 100%;
 }
 .orange{
-    background-color: #d65151;
+    background-color: orange;
+    color:white;
 }
