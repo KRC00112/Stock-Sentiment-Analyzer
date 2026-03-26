@@ -1,0 +1,66 @@
+.app{
+    background-color: #f6f2df;
+    height: fit-content;
+    display: flex;
+    /*align-items: center;*/
+    justify-content: center;
+    min-height: 100vh;
+    max-height: 100%;
+
+}
+
+.main-panel{
+
+    background-color: #eae1b7;
+    width: 60%;
+    margin-block: 5%;
+    height: 100%;
+
+
+
+}
+
+.articles-list{
+    background-color: #6c5f20;
+    height: 100%;
+
+}
+
+.article-card{
+    background-color: #d65151;
+    margin-bottom: 5px;
+}
+.ticker-and-signal{
+    display: flex;
+    justify-content: space-between;
+
+}
+.ticker-and-company{
+    background-color: #ecd259;
+    flex-grow: 1;
+}
+.signal{
+    background-color: #86f486;
+    flex-grow: 1;
+
+}
+.analysis-and-distribution{
+    display: flex;
+}
+
+.sentiment-analysis{
+    display: flex;
+    flex-direction: column;
+    background-color: #d6b751;
+    width: 100%;
+
+}
+.sentiment-analysis div{
+    background-color: #d65151;
+    margin-block: 5px;
+    flex-grow: 1;
+    width: 100%;
+}
+.orange{
+    background-color: #d65151;
+}
