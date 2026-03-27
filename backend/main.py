@@ -1,4 +1,6 @@
 import os
+import re
+import finnhub
 from dotenv import load_dotenv
 from newsapi import NewsApiClient
 from transformers import pipeline
@@ -25,27 +27,14 @@ load_dotenv()
 newsapi = NewsApiClient(api_key=os.getenv("NEWS_API_KEY"))
 nlp = pipeline("text-classification", model="ProsusAI/finbert")
 
-class TickerName(str, Enum):
-    AAPL = "AAPL"
-    MSFT = "MSFT"
-    GOOGL = "GOOGL"
-    NVDA = "NVDA"
-    TSLA = "TSLA"
-    AMZN = "AMZN"
-    NFLX = "NFLX"
-    META = "META"
 
+finnhub_client = finnhub.Client(api_key=os.getenv("FINNHUB_API_KEY"))
+all_stocks=finnhub_client.stock_symbols('US')
+companies={}
+for stock in all_stocks:
+  companies[stock['symbol']]=stock['description']
 
-companies = {
-    "AAPL": "Apple",
-    "MSFT": "Microsoft",
-    "GOOGL": "Google",
-    "NVDA": "Nvidia",
-    "TSLA": "Tesla",
-    "AMZN": "Amazon",
-    "NFLX": "Netflix",
-    "META": "Meta"
-}
+TickerName = Enum('TickerName',{symbol: symbol for symbol in companies.keys()})
 
 
 
@@ -59,6 +48,16 @@ def summary(results):
 
     total_articles=len(results)
 
+    if total_articles == 0:
+                return {
+                    "total_articles": 0,
+                    "positive": 0,
+                    "negative": 0,
+                    "neutral": 0,
+                    "positive_pct": 0,
+                    "negative_pct": 0,
+                    "neutral_pct": 0,
+                }
     def find_pct(type):
         val=(type/total_articles)*100
         return round(val,2)
@@ -74,6 +73,7 @@ def summary(results):
             neg_count+=1
         else:
             neu_count+=1
+
 
 
     return({
@@ -96,11 +96,18 @@ def determine_signal(summary_results):
     else:
         return "Neutral"
 
+STRIP_SUFFIXES = r'\b(INC|CORP|LTD|LLC|CO|PLC|GROUP|HOLDINGS?|INTERNATIONAL|INTL|NV|SA|AG|SE|/THE|.COM|-|CL|A)\b\.?'
+
+def clean_company_name(raw: str):
+    cleaned = re.sub(STRIP_SUFFIXES, '', raw, flags=re.IGNORECASE)
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    return cleaned.title()
+
+
 @app.get("/sentiment/{ticker_name}")
 async def display_result(ticker_name:TickerName, total_page_size:int = 10):
-
     top_articles = newsapi.get_everything(
-        q=f'"{companies[ticker_name.value]}" OR "{ticker_name.value}"',
+        q=f'"{clean_company_name(companies[ticker_name.value])}" OR "{ticker_name.value}"',
         language='en',
         sort_by='publishedAt',
         page_size=total_page_size,

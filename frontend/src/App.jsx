@@ -181,7 +181,7 @@ function App() {
                                 legend={false}
                                 width={220}
                                 height={220}
-                                colors={["#C9A84CFF", "#e05c5c", "#5b9bd5"]}
+                                colors={[ "#e05c5c", "#5b9bd5","#C9A84CFF"]}
                                 data={[
                                     { label: 'positive', value: apiDataObj.summary?.positive_pct },
                                     { label: 'negative', value: apiDataObj.summary?.negative_pct },
