@@ -4,7 +4,26 @@ import DonutChart from "react-donut-chart";
 
 function App() {
 
-    const sampleTickers=['AMZN','MSFT','AAPL','GOOGL','NVDA','META']
+    const sampleTickers = ['AMZN', 'MSFT', 'AAPL', 'GOOGL', 'NVDA', 'META']
+
+    const signalStyleOnRender=(signal)=>{
+        if(signal==='Bullish'){
+            return 'bullish-signal-color'
+        }else if(signal==='Bearish'){
+            return 'bearish-signal-color'
+        }
+        return 'neutral-signal-color'
+    }
+
+    const signalOnRender=(signal)=>{
+        if(signal==='Bullish'){
+            return '▲ Bullish'
+        }else if(signal==='Bearish'){
+            return '▼ Bearish'
+        }
+        return '◆ Neutral'
+    }
+
 
     const [apiDataObj, setApiDataObj] = useState({})
     const [tickerNameInput, setTickerNameInput] = useState('')
@@ -13,10 +32,10 @@ function App() {
     const [pageSize, setPageSize] = useState(10)
     const [activeSampleTicker, setActiveSampleTicker] = useState('')
     const [loading, setLoading] = useState(false)
-
+    const [reload, setReload] = useState(0)
 
     useEffect(() => {
-        if (!tickerName) return  // guard on tickerName, not tickerNameInput
+        if (!tickerName) return
 
         async function getData() {
             const response = await fetch(
@@ -27,117 +46,173 @@ function App() {
             setLoading(false)
         }
         getData()
-    }, [tickerName, pageSize])
+    }, [tickerName, pageSize, reload])
 
-    const handleTickerInputChange = (e) => {
-        setTickerNameInput(e.target.value)
-    }
-
-    const handlePageSizeInputChange = (e) => {
-        setPageSizeInput(e.target.value)
-    }
+    const handleTickerInputChange = (e) => setTickerNameInput(e.target.value)
+    const handlePageSizeInputChange = (e) => setPageSizeInput(e.target.value)
 
     const handleGetBtnClick = () => {
         if (!tickerNameInput) return
         setTickerName(tickerNameInput.toUpperCase())
-        setPageSize(pageSizeInput?Number(pageSizeInput):10)
+        setPageSize(pageSizeInput ? Number(pageSizeInput) : 10)
         setTickerNameInput('')
-        setActiveSampleTicker('');
+        setActiveSampleTicker('')
         setLoading(true)
+        setReload(prev => prev + 1)
     }
-    const onSampleTickerClick = (ticker) => {
-        setActiveSampleTicker(ticker);
-        setTickerName(ticker.toUpperCase());
-        setPageSize(pageSizeInput);
-        setLoading(true)
 
+    const onSampleTickerClick = (ticker) => {
+        setActiveSampleTicker(ticker)
+        setTickerName(ticker.toUpperCase())
+        setPageSize(pageSizeInput ? Number(pageSizeInput) : 10)
+        setLoading(true)
+        setReload(prev => prev + 1)
+    }
+
+    const getSentimentClass = (label) => {
+        if (!label) return ''
+        const l = label.toLowerCase()
+        if (l.includes('pos')) return 'positive'
+        if (l.includes('neg')) return 'negative'
+        return 'neutral'
     }
 
     return (
         <div className='app'>
             <div className='main-panel'>
-                <input type='text' onChange={handleTickerInputChange} value={tickerNameInput} disabled={loading}/>
-                <input type='number' onChange={handlePageSizeInputChange} value={pageSizeInput} disabled={loading} />
-                <button onClick={handleGetBtnClick} disabled={loading}>Get Data</button>
-                <div>{sampleTickers.map(ticker=>{
-                    return <button key={ticker}
-                                   disabled={loading}
-                                   onClick={()=>onSampleTickerClick(ticker)}
-                                    className={`${activeSampleTicker===ticker?'orange':''}`}>{ticker}</button>
-                })}
+                <header>STOCK SENTIMENT ANALYZER</header>
+
+                {/* Search row */}
+                <div className='search-row'>
+                    <input
+                        type='text'
+                        placeholder='Enter ticker…'
+                        onChange={handleTickerInputChange}
+                        value={tickerNameInput}
+                        disabled={loading}
+                        onKeyDown={(e) => e.key === 'Enter' && handleGetBtnClick()}
+                    />
+                    <input
+                        type='number'
+                        onChange={handlePageSizeInputChange}
+                        value={pageSizeInput}
+                        disabled={loading}
+                        min={1}
+                    />
+                    <button className='btn-get' onClick={handleGetBtnClick} disabled={loading}>
+                        Analyze
+                    </button>
                 </div>
-                {(Object.keys(apiDataObj).length > 0 && loading===false) && <div className='results'>
-                    <div className='ticker-and-signal'>
-                        <div className='ticker-and-company'>
-                            <div>{apiDataObj.ticker}</div>
-                            <div>{apiDataObj.company}</div>
-                        </div>
-                        <div className='signal'>
-                            <div>SIGNAL</div>
-                            <div>{apiDataObj.signal}</div>
-                        </div>
+
+                {/* Quick-pick pills */}
+                <div className='ticker-pills'>
+                    {sampleTickers.map(ticker => (
+                        <button
+                            key={ticker}
+                            disabled={loading}
+                            onClick={() => onSampleTickerClick(ticker)}
+                            className={activeSampleTicker === ticker ? 'orange' : ''}
+                        >
+                            {ticker}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Loading */}
+                {loading && (
+                    <div className='loading'>
+                        <span className='loading-dot' />
+                        <span className='loading-dot' />
+                        <span className='loading-dot' />
+                        Fetching sentiment data…
                     </div>
-                    <div className='analysis-and-distribution'>
-                        <div className='sentiment-analysis'>
-                            <div className='articles-analyzed'>
-                                <div>Articles analyzed</div>
-                                <div>{apiDataObj?.summary?.total_articles}</div>
-                                <div>last batch</div>
-                            </div>
+                )}
 
-                            <div className='negative-coverage'>
-                                <div>Negative coverage</div>
-                                <div>{apiDataObj.summary?.negative_pct}%</div>
-                                <div>{apiDataObj.summary?.negative} articles</div>
-                            </div>
+                {/* Results */}
+                {Object.keys(apiDataObj).length > 0 && !loading && (
+                    <div className='results'>
 
-                            <div className='positive-coverage'>
-                                <div>Positive coverage</div>
-                                <div>{apiDataObj.summary?.positive_pct}%</div>
-                                <div>{apiDataObj.summary?.positive} articles</div>
+                        {/* Header */}
+                        <div className='ticker-and-signal'>
+                            <div className='ticker-and-company'>
+                                <div className='ticker-label'>{apiDataObj.ticker}</div>
+                                <div className='company-label'>{apiDataObj.company}</div>
                             </div>
-
-                            <div className='neutral-coverage'>
-                                <div>Neutral coverage</div>
-                                <div>{apiDataObj.summary?.neutral_pct}%</div>
-                                <div>{apiDataObj.summary?.neutral} articles</div>
+                            <div className='signal'>
+                                <div className='signal-eyebrow'>Signal</div>
+                                <div className={`signal-value ${signalStyleOnRender(apiDataObj.signal)}`}>{signalOnRender(apiDataObj.signal)}</div>
                             </div>
                         </div>
-                        <div><DonutChart
-                            className="donutchart"
-                            innerRadius={0.6}
-                            outerRadius={0.9}
-                            legend={false}
-                            width={260}
-                            height={260}
-                            colors={["#4CAF50", "#2196F3", "#FF5722"]}
-                            data={[{label:'positive', value:apiDataObj.summary?.positive_pct},
-                                {label:'negative', value:apiDataObj.summary?.negative_pct},
-                                {label:'neutral', value:apiDataObj.summary?.neutral_pct}].map(b => ({
-                                label: b.label,
-                                value: b.value
-                            }))}
-                            style={{ color: "white" }}
-                        /></div>
+
+                        {/* Stats + Donut */}
+                        <div className='analysis-and-distribution'>
+                            <div className='sentiment-analysis'>
+
+                                <div className='stat-card total'>
+                                    <span className='stat-label'>Articles analyzed</span>
+                                    <span className='stat-value'>{apiDataObj?.summary?.total_articles}</span>
+                                    <span className='stat-sub'>last batch</span>
+                                </div>
+
+                                <div className='stat-card positive'>
+                                    <span className='stat-label'>Positive</span>
+                                    <span className='stat-value'>{apiDataObj.summary?.positive_pct}%</span>
+                                    <span className='stat-sub'>{apiDataObj.summary?.positive} articles</span>
+                                </div>
+
+                                <div className='stat-card negative'>
+                                    <span className='stat-label'>Negative</span>
+                                    <span className='stat-value'>{apiDataObj.summary?.negative_pct}%</span>
+                                    <span className='stat-sub'>{apiDataObj.summary?.negative} articles</span>
+                                </div>
+
+                                <div className='stat-card neutral'>
+                                    <span className='stat-label'>Neutral</span>
+                                    <span className='stat-value'>{apiDataObj.summary?.neutral_pct}%</span>
+                                    <span className='stat-sub'>{apiDataObj.summary?.neutral} articles</span>
+                                </div>
+
+                            </div>
+
+                            <DonutChart
+                                className="donutchart"
+                                innerRadius={0.62}
+                                outerRadius={0.9}
+                                legend={false}
+                                width={220}
+                                height={220}
+                                colors={["#C9A84CFF", "#e05c5c", "#5b9bd5"]}
+                                data={[
+                                    { label: 'positive', value: apiDataObj.summary?.positive_pct },
+                                    { label: 'negative', value: apiDataObj.summary?.negative_pct },
+                                    { label: 'neutral',  value: apiDataObj.summary?.neutral_pct },
+                                ].sort((a, b) => b.value - a.value)}
+                            />
+                        </div>
+
+                        {/* Articles */}
+                        <div className='articles-list'>
+                            {apiDataObj?.articles?.map(obj => {
+                                const sentClass = getSentimentClass(obj.sentiment_label)
+                                return (
+                                    <div className='article-card' key={obj.id}>
+                                        <span className='article-index'>{obj.id}</span>
+                                        <span className='article-title'>{obj.title}</span>
+                                        <div className='article-sentiment'>
+                                            <span className={`sentiment-badge ${sentClass}`}>
+                                                {obj.sentiment_label}
+                                            </span>
+                                            <span className='confidence'>{obj.confidence_score_pct}%</span>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
 
                     </div>
-                    <div className='articles-list'>{apiDataObj?.articles?.map(obj=>{
-                        return <div className='article-card' key={obj.id}>
-                            <div>{obj.id}.</div>
-                            <div>{obj.title}</div>
-                            <div>
-                                <div>{obj.sentiment_label}</div>
-                                <div>{obj.confidence_score_pct}</div>
-                            </div>
-
-                        </div>
-                    })}</div>
-
-                </div>}
-                {loading &&<div>Loading...</div>}
+                )}
 
             </div>
-
         </div>
     )
 }
