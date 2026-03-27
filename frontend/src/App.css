@@ -322,8 +322,8 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .article-index {
     font-size: 11px;
-    color: var(--text-muted);
     text-align: right;
+    color: white;
 }
 
 .article-title {
@@ -351,13 +351,14 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     text-transform: uppercase;
 }
 
-.sentiment-badge.positive { background: rgba(61,186,104,0.18); color: var(--green-bright); }
+.sentiment-badge.positive { background: rgba(61,186,104,0.18); color: var(--gold); }
 .sentiment-badge.negative { background: rgba(224,92,92,0.18);  color: var(--red-soft); }
 .sentiment-badge.neutral  { background: rgba(91,155,213,0.18); color: var(--blue-soft); }
 
 .confidence {
     font-size: 11px;
-    color: var(--text-muted);
+    margin-top: 2px;
+    color: white;
 }
 
 /* Loading state */
