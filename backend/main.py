@@ -96,7 +96,7 @@ def determine_signal(summary_results):
     else:
         return "Neutral"
 
-STRIP_SUFFIXES = r'\b(INC|CORP|LTD|LLC|CO|PLC|GROUP|HOLDINGS?|INTERNATIONAL|INTL|NV|SA|AG|SE|/THE|.COM|-|CL|A)\b\.?'
+STRIP_SUFFIXES = r'\b(INC|CORP|LTD|LLC|CO|PLC|GROUP|HOLDINGS?|INTERNATIONAL|INTL|NV|SA|AG|SE|/THE|.COM|-|CL|A|PLC)\b\.?'
 
 def clean_company_name(raw: str):
     cleaned = re.sub(STRIP_SUFFIXES, '', raw, flags=re.IGNORECASE)
