@@ -64,6 +64,7 @@ function App() {
     const onSampleTickerClick = (ticker) => {
         setActiveSampleTicker(ticker)
         setTickerName(ticker.toUpperCase())
+        setTickerNameInput(ticker)
         setPageSize(pageSizeInput ? Number(pageSizeInput) : 10)
         setLoading(true)
         setReload(prev => prev + 1)
