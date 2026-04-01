@@ -39,7 +39,7 @@ function App() {
 
         async function getData() {
             const response = await fetch(
-                `http://localhost:8000/sentiment/${tickerName}?total_page_size=${pageSize}`
+                `http://127.0.0.1:8000/sentiment/${tickerName}?total_page_size=${pageSize}`
             )
             const data = await response.json()
             setApiDataObj(data)
