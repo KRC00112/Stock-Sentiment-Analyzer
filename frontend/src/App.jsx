@@ -42,7 +42,6 @@ function App() {
             const response = await fetch(
                 `http://127.0.0.1:8000/sentiment/${tickerName}?total_page_size=${pageSize}`
             )
-            console.log(response)
 
             if(!response.ok){
                 setError(true)
@@ -205,7 +204,7 @@ function App() {
                                 legend={false}
                                 width={220}
                                 height={220}
-                                colors={[ "#e05c5c", "#5b9bd5","#C9A84CFF"]}
+                                colors={["#f5c842", "#e8614a", "#5ba8d4"]}
                                 data={[
                                     { label: 'positive', value: apiDataObj.summary?.positive_pct },
                                     { label: 'negative', value: apiDataObj.summary?.negative_pct },

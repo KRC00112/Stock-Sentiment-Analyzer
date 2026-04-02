@@ -25,16 +25,17 @@ app.add_middleware(
 
 load_dotenv()
 newsapi = NewsApiClient(api_key=os.getenv("NEWS_API_KEY"))
+finnhub_client = finnhub.Client(api_key=os.getenv("FINNHUB_API_KEY"))
 nlp = pipeline("text-classification", model="ProsusAI/finbert")
 
 
-finnhub_client = finnhub.Client(api_key=os.getenv("FINNHUB_API_KEY"))
 all_stocks=finnhub_client.stock_symbols('US')
 companies={}
 for stock in all_stocks:
   companies[stock['symbol']]=stock['description']
 
 TickerName = Enum('TickerName',{symbol: symbol for symbol in companies.keys()})
+STRIP_SUFFIXES = r'\b(INC|CORP|LTD|LLC|CO|PLC|GROUP|HOLDINGS?|INTERNATIONAL|INTL|NV|SA|AG|SE|/THE|.COM|-|CL|A|PLC)\b\.?'
 
 
 
@@ -96,7 +97,6 @@ def determine_signal(summary_results):
     else:
         return "Neutral"
 
-STRIP_SUFFIXES = r'\b(INC|CORP|LTD|LLC|CO|PLC|GROUP|HOLDINGS?|INTERNATIONAL|INTL|NV|SA|AG|SE|/THE|.COM|-|CL|A|PLC)\b\.?'
 
 def clean_company_name(raw: str):
     cleaned = re.sub(STRIP_SUFFIXES, '', raw, flags=re.IGNORECASE)
