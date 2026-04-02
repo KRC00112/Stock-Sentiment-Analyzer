@@ -33,14 +33,25 @@ function App() {
     const [activeSampleTicker, setActiveSampleTicker] = useState('')
     const [loading, setLoading] = useState(false)
     const [reload, setReload] = useState(0)
-
+    const [error, setError] = useState(false)
     useEffect(() => {
         if (!tickerName) return
 
         async function getData() {
+            setError(false)
             const response = await fetch(
                 `http://127.0.0.1:8000/sentiment/${tickerName}?total_page_size=${pageSize}`
             )
+            console.log(response)
+
+            if(!response.ok){
+                setError(true)
+                setApiDataObj({})
+                setLoading(false)
+                return
+
+            }
+
             const data = await response.json()
             setApiDataObj(data)
             setLoading(false)
@@ -53,7 +64,7 @@ function App() {
 
     const handleGetBtnClick = () => {
         if (!tickerNameInput) return
-        setTickerName(tickerNameInput.toUpperCase())
+        setTickerName(tickerNameInput.toUpperCase().trim())
         setPageSize(pageSizeInput ? Number(pageSizeInput) : 10)
         setTickerNameInput('')
         setActiveSampleTicker('')
@@ -129,8 +140,20 @@ function App() {
                     </div>
                 )}
 
+                {error && !loading && (
+                    <div>
+                        Check Your ticker name or try again later.
+                    </div>
+                )}
+
+                {apiDataObj.summary?.total_articles <= 0 && !loading && (
+                    <div>
+                        No articles for {tickerName} right now.
+                    </div>
+                )}
+
                 {/* Results */}
-                {Object.keys(apiDataObj).length > 0 && !loading && (
+                {apiDataObj.summary?.total_articles > 0 && !loading && (
                     <div className='results'>
 
                         {/* Header */}
