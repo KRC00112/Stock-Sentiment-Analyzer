@@ -123,10 +123,12 @@ async def display_result(ticker_name:TickerName, total_page_size:int = 10):
     for i, article in enumerate(top_articles['articles'],1):
         # print(i,". ",article['title'],"\n", formatted_score(nlp(article['title'])[0]))
         # results.append(f"{i}. {article['title']}, {formatted_score(nlp(article['title'])[0])}")
-        sentiment = formatted_score(nlp(article['title'])[0])
+        text = article['description'] or article['title']
+        sentiment = formatted_score(nlp(text[:512])[0])
         results.append({
             "id":i,
             "title":article['title'],
+            "desc":article['description'],
             "sentiment_label": sentiment['label'],
             "confidence_score_pct": sentiment['score']
         })
