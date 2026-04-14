@@ -40,7 +40,7 @@ function App() {
         async function getData() {
             setError(false)
             const response = await fetch(
-                `http://127.0.0.1:58662/sentiment/${tickerName}?total_page_size=${pageSize}`
+                `api/sentiment/${tickerName}?total_page_size=${pageSize}`
             )
 
             if(!response.ok){
