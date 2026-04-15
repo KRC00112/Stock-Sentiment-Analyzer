@@ -229,6 +229,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     border: 1.5px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 20px 24px;
+    overflow: hidden;
 }
 
 .sentiment-analysis {
@@ -380,4 +381,24 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     color: var(--red-soft);
     font-size: 0.9rem;
     letter-spacing: 0.01em;
+}
+
+@media (max-width: 520px) {
+    .analysis-and-distribution {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .sentiment-analysis {
+        width: 100%;
+    }
+
+    .ticker-and-signal {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .signal {
+        align-items: flex-start;
+    }
 }
