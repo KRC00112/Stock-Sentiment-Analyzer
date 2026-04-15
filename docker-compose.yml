@@ -1,6 +1,6 @@
 services:
   backend:
-    image: krcdocker2138/stock-sentiment-analyzer:backend-v15
+    image: krcdocker2138/stock-sentiment-analyzer:backend-v16
     container_name: analyzer-backend
     build:
       context: ./backend
@@ -11,7 +11,7 @@ services:
       - 8000:8000
 
   frontend:
-    image: krcdocker2138/stock-sentiment-analyzer:frontend-v15
+    image: krcdocker2138/stock-sentiment-analyzer:frontend-v16
     pull_policy: never
     container_name: analyzer-frontend
     build:
