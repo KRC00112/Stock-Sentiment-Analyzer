@@ -150,4 +150,4 @@ docker pull krcdocker2138/stock-sentiment-analyzer:frontend-v16
 
 ## ⚠️ Disclaimer
 
-This tool is for **informational and educational purposes only**. It is not financial advice. Sentiment derived from news headlines does not guarantee future stock performance. Always do your own research before making investment decisions.
+This tool is for informational and educational purposes only. It is not financial advice. Sentiment derived from news headlines does not guarantee future stock performance. Always do your own research before making investment decisions.
