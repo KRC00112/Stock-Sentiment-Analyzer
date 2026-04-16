@@ -46,7 +46,7 @@ A full-stack application that analyzes financial news sentiment for any US-liste
 
 ## Prerequisites
 
-- [Docker](https://www.docker.com/) and Docker Compose installed
+- [Docker](https://www.docker.com/) and Docker Desktop installed
 - A [NewsAPI](https://newsapi.org/) API key
 - A [Finnhub](https://finnhub.io/) API key
 
