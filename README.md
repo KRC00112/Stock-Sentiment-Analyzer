@@ -82,7 +82,7 @@ docker compose up --build
 
 ---
 
-## 🔌 API Reference
+## API Reference
 
 ### `GET /sentiment/{ticker_name}`
 
