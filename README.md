@@ -22,7 +22,7 @@ A full-stack application that analyzes financial news sentiment for any US-liste
 | NLP Model | ProsusAI/FinBERT (🤗Hugging Face) via transformers|
 | Market Data | Finnhub API |
 | News Data | NewsAPI |
-| Containerization | Docker + Docker Compose |
+| Containerization | Docker + Docker Compose|
 
 ---
 
