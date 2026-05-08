@@ -1,6 +1,6 @@
 # 📈 Stock Sentiment Analyzer
 
-A full-stack application that analyzes financial news sentiment for any US-listed stock ticker using NLP. Enter a ticker symbol, and the app fetches recent news from top financial outlets, runs it through a FinBERT model, and returns a **Bullish / Bearish / Neutral** signal with article-level breakdowns.
+A full-stack application that analyzes financial news sentiment for any US-listed stock ticker using NLP. Enter a ticker symbol, and the app fetches recent news from top financial outlets, runs it through a FinBERT model, and returns a **Bullish / Bearish / Neutral** signal with article-level breakdowns
 
 ---
 
